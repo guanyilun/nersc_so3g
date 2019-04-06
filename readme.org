@@ -24,6 +24,8 @@ git clone https://github.com/guanyilun/nersc_so3g.git
 cd nersc_so3g
 ./install_so3g.sh
 #+END_SRC
+It will first clone the relevant repositories and may require  
+a login credential, afterwards it should build by itself.
 This will take a few minutes to build, once it's done, you have to
 make sure that spt3g software is exposed in the search path, for
 my case,
@@ -35,4 +37,7 @@ export LD_LIBRARY_PATH=${SPT3G_SOFTWARE_BUILD_PATH}/spt3g:$LD_LIBRARY_PATH
 export PYTHONPATH=${SPT3G_SOFTWARE_BUILD_PATH}:$PYTHONPATH
 #+END_SRC
 This should go into the ~.bashrc.ext~ script if desired to run on
-start-up. 
+start-up. Finally test that so3g is installed successfully by
+#+BEGIN_SRC bash
+python -c "import so3g"
+#+END_SRC 

@@ -36,6 +36,12 @@ export LD_LIBRARY_PATH=${LOCAL}/lib:${LD_LIBRARY_PATH}
 # TODO: figure out how to compile with intel
 module swap PrgEnv-intel PrgEnv-gnu
 
+# cloning repositories
+echo Cloning repositories
+cd $BUILD_DIR
+git clone https://github.com/CMB-S4/spt3g_software
+git clone https://github.com/simonsobs/so3g
+
 # compiling boost
 echo Building boost...
 cd $BUILD_DIR
@@ -67,9 +73,7 @@ module load fftw/3.3.8
 export CXXFLAGS="$CXXFLAGS -w -I/usr/common/software/netcdf/4.4.1/hsw/intel/include"
 
 echo Building spt3g_software...
-cd $BUILD_DIR
-git clone https://github.com/CMB-S4/spt3g_software
-cd spt3g_software
+cd $BUILD_DIR/spt3g_software
 mkdir build
 cd build
 
@@ -94,13 +98,11 @@ export PYTHONPATH=${SPT3G_SOFTWARE_BUILD_PATH}:$PYTHONPATH
 
 # build so3g
 echo Building so3g...
-cd $BUILD_DIR
-git clone https://github.com/simonsobs/so3g
-cd so3g
+cd $BUILD_DIR/so3g
 mkdir build
 cd build
 cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc
 make -j8
 make install
-echo If no error, installation is success. 
+echo If no error, installation is successful. 
 echo Done!
