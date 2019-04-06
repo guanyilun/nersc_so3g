@@ -12,7 +12,7 @@ conda create -n myenv python=3.6 numpy astropy
 #+END_SRC
 Activate the conda environment
 #+BEGIN_SRC bash
-conda activate myenv
+source activate myenv
 #+END_SRC
 This is all I need for now, for more information about setting up
 conda environment on NERSC refer to [[https://docs.nersc.gov/services/jupyter/#conda-environments-as-kernels][this link]].
