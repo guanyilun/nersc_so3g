@@ -1,0 +1,38 @@
+* Build so3g on NERSC
+** Create a local conda environment
+I find it easier to have a local conda environment because many
+libraries can be installed easily with conda-forge. First load
+anaconda module
+#+BEGIN_SRC bash
+module load python/3.6-anaconda-4.4
+#+END_SRC
+Create a local environment
+#+BEGIN_SRC bash
+conda create -n myenv python=3.6 numpy astropy
+#+END_SRC
+Activate the conda environment
+#+BEGIN_SRC bash
+conda activate myenv
+#+END_SRC
+This is all I need for now, for more information about setting up
+conda environment on NERSC refer to [[https://docs.nersc.gov/services/jupyter/#conda-environments-as-kernels][this link]].
+** Build so3g with automatic script
+Once a bare minimum conda environment is setup, one can make use of
+the automatic script from this repository,
+#+BEGIN_SRC bash
+git clone https://github.com/guanyilun/nersc_so3g.git
+cd nersc_so3g
+./install_so3g.sh
+#+END_SRC
+This will take a few minutes to build, once it's done, you have to
+make sure that spt3g software is exposed in the search path, for
+my case,
+#+BEGIN_SRC bash
+export SPT3G_SOFTWARE_PATH=${HOME}/software/spt3g_software
+export SPT3G_SOFTWARE_BUILD_PATH=${SPT3G_SOFTWARE_PATH}/build
+export PATH=${SPT3G_SOFTWARE_BUILD_PATH}/bin:$PATH
+export LD_LIBRARY_PATH=${SPT3G_SOFTWARE_BUILD_PATH}/spt3g:$LD_LIBRARY_PATH
+export PYTHONPATH=${SPT3G_SOFTWARE_BUILD_PATH}:$PYTHONPATH
+#+END_SRC
+This should go into the ~.bashrc.ext~ script if desired to run on
+start-up. 
