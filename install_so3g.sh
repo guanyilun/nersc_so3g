@@ -37,7 +37,7 @@ export LD_LIBRARY_PATH=${LOCAL}/lib:${LD_LIBRARY_PATH}
 module swap PrgEnv-intel PrgEnv-gnu
 
 # cloning repositories
-echo Cloning repositories
+echo Cloning repositories...
 cd $BUILD_DIR
 git clone https://github.com/CMB-S4/spt3g_software
 git clone https://github.com/simonsobs/so3g

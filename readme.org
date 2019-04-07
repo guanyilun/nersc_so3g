@@ -24,11 +24,11 @@ git clone https://github.com/guanyilun/nersc_so3g.git
 cd nersc_so3g
 ./install_so3g.sh
 #+END_SRC
-It will first clone the relevant repositories and may require  
-a login credential, afterwards it should build by itself.
-This will take a few minutes to build, once it's done, you have to
-make sure that spt3g software is exposed in the search path, for
-my case,
+It will first clone the relevant repositories and may require a login
+credential. Afterwads it should build by itself.  This will take a few
+minutes to build. Once it's done, you have to make sure that ~spt3g~
+is exposed in the search path. For a quick testing, run these in
+terminal
 #+BEGIN_SRC bash
 export SPT3G_SOFTWARE_PATH=${HOME}/software/spt3g_software
 export SPT3G_SOFTWARE_BUILD_PATH=${SPT3G_SOFTWARE_PATH}/build
@@ -36,8 +36,79 @@ export PATH=${SPT3G_SOFTWARE_BUILD_PATH}/bin:$PATH
 export LD_LIBRARY_PATH=${SPT3G_SOFTWARE_BUILD_PATH}/spt3g:$LD_LIBRARY_PATH
 export PYTHONPATH=${SPT3G_SOFTWARE_BUILD_PATH}:$PYTHONPATH
 #+END_SRC
-This should go into the ~.bashrc.ext~ script if desired to run on
-start-up. Finally test that so3g is installed successfully by
+Test that ~so3g~ is installed successfully by
 #+BEGIN_SRC bash
 python -c "import so3g"
-#+END_SRC 
+#+END_SRC
+It should run without error if the installation is successful. In
+practice you don't want to run these lines on every login, so consider
+including them in the ~.bashrc.ext~ script. For example, here is an example
+of how I would set it up in ~.bashrc.ext~ script. 
+#+BEGIN_SRC bash
+module load python/3.6-anaconda-4.4
+
+export LOCAL=/global/homes/y/yguan/.local/
+export PATH=/global/homes/y/yguan/.local/bin:${PATH}
+export LD_LIBRARY_PATH=/global/homes/y/yguan/.local/lib:${LD_LIBRARY_PATH}
+
+export SPT3G_SOFTWARE_PATH=${HOME}/software/spt3g_software
+export SPT3G_SOFTWARE_BUILD_PATH=${SPT3G_SOFTWARE_PATH}/build
+export PATH=${SPT3G_SOFTWARE_BUILD_PATH}/bin:$PATH
+export LD_LIBRARY_PATH=${SPT3G_SOFTWARE_BUILD_PATH}/spt3g:$LD_LIBRARY_PATH
+export PYTHONPATH=${SPT3G_SOFTWARE_BUILD_PATH}:$PYTHONPATH
+#+END_SRC
+** Make so3g accessible in JupyterHub 
+To be able to use so3g on the jupyter server provided by NERSC, first you 
+have to make sure that the ipykernel from your python environment is accessible
+in jupyter. To do that,
+#+BEGIN_SRC bash
+source activate myenv
+conda install ipykernel
+python -m ipykernel install --user --name myenv --display-name MyEnv
+#+END_SRC
+The most flexible way to pass environment variables to the ipykernel is by
+creating a helper script here,
+#+BEGIN_SRC bash
+cd ~/.local/share/jupyter/kernels/myenv
+vim kernel-helper.sh
+#+END_SRC
+In this script write these
+#+BEGIN_SRC bash
+#!/bin/bash
+
+# Arbitrary configurations that should run before ipykernel
+# is launched goes here.
+export SPT3G_SOFTWARE_PATH=${HOME}/software/spt3g_software
+export SPT3G_SOFTWARE_BUILD_PATH=${SPT3G_SOFTWARE_PATH}/build
+export PATH=${SPT3G_SOFTWARE_BUILD_PATH}/bin:$PATH
+export LD_LIBRARY_PATH=${SPT3G_SOFTWARE_BUILD_PATH}/spt3g:$LD_LIBRARY_PATH
+export PYTHONPATH=${SPT3G_SOFTWARE_BUILD_PATH}:$PYTHONPATH
+
+# launch ipykernel
+exec /global/homes/y/yguan/.conda/envs/myenv/bin/python \
+    -m ipykernel_launcher "$@"
+#+END_SRC
+Make the script executable,
+#+BEGIN_SRC bash
+chmod u+x kernel-helper.sh
+#+END_SRC
+next modify the ~kernel.json~ file to run our ~kernel-helper.sh~
+script before launching the ipykernel, 
+#+BEGIN_SRC bash
+vim kernel.json
+#+END_SRC
+and change it to something like this 
+#+BEGIN_SRC python
+{
+ "argv": [
+  "/global/homes/y/yguan/.local/share/jupyter/kernels/myenv/kernel-helper.sh",
+  "-f",
+  "{connection_file}"
+ ],
+ "display_name": "MyEnv",
+ "language": "python"
+}
+#+END_SRC
+Now if you go to the jupyter server and launch a notebook with the
+kernel called ~MyEnv~, you should be able to run ~so3g~ (and any
+arbitrary packages in your ~myenv~ environment). Enjoy!
