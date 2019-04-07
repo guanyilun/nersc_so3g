@@ -47,9 +47,9 @@ of how I would set it up in ~.bashrc.ext~ script.
 #+BEGIN_SRC bash
 module load python/3.6-anaconda-4.4
 
-export LOCAL=/global/homes/y/yguan/.local/
-export PATH=/global/homes/y/yguan/.local/bin:${PATH}
-export LD_LIBRARY_PATH=/global/homes/y/yguan/.local/lib:${LD_LIBRARY_PATH}
+export LOCAL=${HOME}/.local/
+export PATH=${HOME}/.local/bin:${PATH}
+export LD_LIBRARY_PATH=${HOME}/.local/lib:${LD_LIBRARY_PATH}
 
 export SPT3G_SOFTWARE_PATH=${HOME}/software/spt3g_software
 export SPT3G_SOFTWARE_BUILD_PATH=${SPT3G_SOFTWARE_PATH}/build
@@ -72,12 +72,11 @@ creating a helper script here,
 cd ~/.local/share/jupyter/kernels/myenv
 vim kernel-helper.sh
 #+END_SRC
-In this script write these
+In this script, write these
 #+BEGIN_SRC bash
 #!/bin/bash
 
-# Arbitrary configurations that should run before ipykernel
-# is launched goes here.
+# arbitrary configurations that run before ipykernel go here
 export SPT3G_SOFTWARE_PATH=${HOME}/software/spt3g_software
 export SPT3G_SOFTWARE_BUILD_PATH=${SPT3G_SOFTWARE_PATH}/build
 export PATH=${SPT3G_SOFTWARE_BUILD_PATH}/bin:$PATH
